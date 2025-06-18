@@ -1,3 +1,5 @@
+import os
+import json
 import streamlit as st
 from streamlit.runtime.scriptrunner import RerunException
 import gspread
@@ -37,10 +39,15 @@ st.markdown(css, unsafe_allow_html=True)
 plt.rcParams['font.family'] = 'Meiryo'
 
 # --- Google Sheets認証セットアップ ---
-SERVICE_ACCOUNT_FILE = 'C:/karaoke-env/service-account.json'
+
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+
+# 環境変数からJSON文字列を取得して辞書に変換
+service_account_info = json.loads(os.environ['GOOGLE_SERVICE_ACCOUNT_JSON'])
+
+credentials = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
 gc = gspread.authorize(credentials)
+
 
 SPREADSHEET_ID = '1a9fDIVwcUUHAZZpsAPdLZRsy42WsyIhi8fC-xmqkJd0'
 sh = gc.open_by_key(SPREADSHEET_ID)
